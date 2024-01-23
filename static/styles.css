@@ -1,0 +1,16 @@
+body {
+    padding-top: 3rem;
+}
+
+#editor {
+    height: 500px;
+}
+
+#run-button {
+    margin-top: 1rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+}
