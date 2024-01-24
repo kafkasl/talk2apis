@@ -76,6 +76,8 @@ def main(files, recreate=False):
                 method=endpoint["method"],
                 summary=endpoint["summary"],
                 description=endpoint["description"],
+                parameters=endpoint["parameters"],
+                definition=endpoint["definition"],
             )
 
             session.add(db_endpoint)
@@ -117,6 +119,6 @@ if __name__ == "__main__":
     # in ./definitions
     if len(files) == 0:
         definitions_dir = os.path.join(os.getcwd(), "openapi/definitions")
-        files = glob.glob(os.path.join(definitions_dir, "*"))
+        files = glob.glob(os.path.join(definitions_dir, "*.json"))
 
     main(files, recreate)

@@ -1,4 +1,5 @@
 from database import db
+from sqlalchemy.dialects.sqlite import JSON
 
 
 class Services(db.Model):
@@ -32,6 +33,8 @@ class APIEndpoints(db.Model):
     method = db.Column(db.String(10), nullable=False)
     summary = db.Column(db.String(), nullable=True)
     description = db.Column(db.String(), nullable=True)
+    parameters = db.Column(JSON, nullable=True)
+    definition = db.Column(JSON, nullable=True)
 
 
 class APIParameters(db.Model):
