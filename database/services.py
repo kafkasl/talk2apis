@@ -1,23 +1,25 @@
 from database import db
-from sqlalchemy.dialects.sqlite import JSON
+from sqlalchemy.dialects.sqlite import JSON, BLOB
+import numpy as np
+from typing import Dict
 
 
 class Services(db.Model):
-    __tablename__ = "services"  # Explicitly define the table name
+    __tablename__ = "services"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     description = db.Column(db.String(), nullable=False)
 
 
 class ServiceCategories(db.Model):
-    __tablename__ = "service_categories"  # Explicitly define the table name
+    __tablename__ = "service_categories"
     id = db.Column(db.Integer, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
     category = db.Column(db.String(80), nullable=False)
 
 
 class ServiceAPIs(db.Model):
-    __tablename__ = "service_apis"  # Explicitly define the table name
+    __tablename__ = "service_apis"
     id = db.Column(db.Integer, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
     version = db.Column(db.String(80), nullable=False)
@@ -25,7 +27,7 @@ class ServiceAPIs(db.Model):
 
 
 class APIEndpoints(db.Model):
-    __tablename__ = "api_endpoints"  # Explicitly define the table name
+    __tablename__ = "api_endpoints"
     id = db.Column(db.Integer, primary_key=True)
     service_id = db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
     api_id = db.Column(db.Integer, db.ForeignKey("service_apis.id"), nullable=False)
@@ -35,6 +37,24 @@ class APIEndpoints(db.Model):
     description = db.Column(db.String(), nullable=True)
     parameters = db.Column(JSON, nullable=True)
     definition = db.Column(JSON, nullable=True)
+    embedding = db.Column(BLOB)
+
+    @classmethod
+    def get_embeddings_for_service_name(
+        cls, service_name: str
+    ) -> Dict[str, np.ndarray]:
+        # Find the service by name
+        service = Services.query.filter_by(name=service_name).one()
+
+        # Extract embeddings
+        db_endpoints = cls.query.filter_by(service_id=service.id).all()
+        embeddings = {
+            endpoint.path: np.frombuffer(endpoint.embedding)
+            for endpoint in db_endpoints
+            if endpoint.embedding
+        }
+
+        return embeddings
 
 
 class APIParameters(db.Model):

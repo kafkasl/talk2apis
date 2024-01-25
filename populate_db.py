@@ -15,6 +15,8 @@ from database.services import (
     DeleteService,
 )
 
+from embeddings import to_binary
+
 
 def main(files, recreate=False):
     # Connect to the SQLite database
@@ -78,6 +80,7 @@ def main(files, recreate=False):
                 description=endpoint["description"],
                 parameters=endpoint["parameters"],
                 definition=endpoint["definition"],
+                embedding=endpoint["embedding"],
             )
 
             session.add(db_endpoint)
@@ -119,6 +122,7 @@ if __name__ == "__main__":
     # in ./definitions
     if len(files) == 0:
         definitions_dir = os.path.join(os.getcwd(), "openapi/definitions")
-        files = glob.glob(os.path.join(definitions_dir, "*.json"))
+        files = glob.glob(os.path.join(definitions_dir, "github.json"))
+        # files = glob.glob(os.path.join(definitions_dir, "*.json"))
 
     main(files, recreate)

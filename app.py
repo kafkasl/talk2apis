@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify, request
 from database.db import init_db
 import openai
+from llm import code_gen
 
 load_dotenv()
 
@@ -94,20 +95,21 @@ def llm_generate_script(service, token, user_prompt, endpoints):
 
 def process_user_prompt(service, token, prompt):
     try:
+        code_gen(prompt, service, token)
         # TODO: ask the llm if this request makes sense
 
-        split_in_tasks = llm_get_prompt_tasks(service, prompt)
-        if len(tasks) == 0:
-            return None, f"No task for the given prompt {prompt}"
+        # split_in_tasks = llm_get_prompt_tasks(service, prompt)
+        # if len(tasks) == 0:
+        #     return None, f"No task for the given prompt {prompt}"
 
-        endpoints = []
-        for task in tasks:
-            llm_get_endpoints = llm_get_task_endpoints(service, task)
-            endpoints += llm_get_endpoints
+        # endpoints = []
+        # for task in tasks:
+        #     llm_get_endpoints = llm_get_task_endpoints(service, task)
+        #     endpoints += llm_get_endpoints
 
-        code = llm_generate_script(service, token, prompt, endpoints)
+        # code = llm_generate_script(service, token, prompt, endpoints)
 
-        return code, None
+        # return code, None
 
     except Exception as e:
         print(e)

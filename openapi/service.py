@@ -1,4 +1,7 @@
 import json
+from embeddings import embedding, to_binary
+from tqdm import tqdm
+import numpy as np
 
 
 def resolve_refs(path, definition, schema, parent_refs=None):
@@ -109,7 +112,9 @@ class Service:
 
     def get_service_endpoints(self):
         endpoints = []
-        for path, endpoint_dict in self.definition["paths"].items():
+        for path, endpoint_dict in tqdm(
+            list(self.definition["paths"].items()), desc="Processing endpoints"
+        ):
             for method, method_dict in endpoint_dict.items():
                 endpoint = {}
 
@@ -125,10 +130,14 @@ class Service:
                         path.split("/"), method_dict["parameters"], self.definition
                     )
 
-                if "user/subscriptions" in path:
-                    breakpoint
                 endpoint["parameters"] = self.parse_parameters(path, method_dict)
                 endpoint["definition"] = json.dumps(method_dict)
+
+                endpoint["embedding"] = to_binary(np.array([]))
+                try:
+                    endpoint["embedding"] = to_binary(embedding(endpoint["definition"]))
+                except ValueError as e:
+                    print(f"skip embedding {path}: {e}")
 
                 endpoints.append(endpoint)
 
