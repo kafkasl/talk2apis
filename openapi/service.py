@@ -1,5 +1,5 @@
 import json
-from embeddings import embedding, to_binary
+from embeddings import gen_embedding, to_binary
 from tqdm import tqdm
 import numpy as np
 
@@ -135,7 +135,7 @@ class Service:
 
                 endpoint["embedding"] = to_binary(np.array([]))
                 try:
-                    endpoint["embedding"] = to_binary(embedding(endpoint["definition"]))
+                    endpoint["embedding"] = to_binary(gen_embedding(endpoint["definition"]))
                 except ValueError as e:
                     print(f"skip embedding {path}: {e}")
 
