@@ -107,7 +107,7 @@ def main(files, recreate=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "definition_files", nargs="*", help="A list of definition files"
+        "--definition_files", nargs="*", help="A list of definition files"
     )
     parser.add_argument(
         "--recreate", action="store_true", help="Overwrite db entries for existing apis"
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # in ./definitions
     if len(files) == 0:
         definitions_dir = os.path.join(os.getcwd(), "openapi/definitions")
-        files = glob.glob(os.path.join(definitions_dir, "github.json"))
-        # files = glob.glob(os.path.join(definitions_dir, "*.json"))
+        # files = glob.glob(os.path.join(definitions_dir, "github.json"))
+        files = glob.glob(os.path.join(definitions_dir, "*"))
 
     main(files, recreate)

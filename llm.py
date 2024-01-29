@@ -2,7 +2,7 @@ from jinja2 import Template
 from typing import Dict
 
 # from alpha_codium.llm.ai_handler import AiHandler
-from embeddings import gen_embedding, cosine_similarity
+from embeddings import get_embedding, cosine_similarity
 from database.services import APIEndpoints
 
 
@@ -170,7 +170,7 @@ def code_gen(prompt, service, token):
     service = "GitHub v3 REST API"  # Replace with your actual service name
     embeddings = APIEndpoints.get_embeddings_for_service(service)
 
-    prompt_embedding = gen_embedding(prompt)
+    prompt_embedding = get_embedding(prompt)
     ranked_paths = rank_closest_embeddings(prompt_embedding, embeddings)
     path = ranked_paths[0][0]  # get first element, and the path from it
     print(path)

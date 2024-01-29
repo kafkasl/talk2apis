@@ -1,7 +1,9 @@
 import json
-from embeddings import embedding, to_binary
+from embeddings import get_embedding, to_binary
 from tqdm import tqdm
 import numpy as np
+import yaml
+import os
 
 
 def resolve_refs(path, definition, schema, parent_refs=None):
@@ -61,8 +63,15 @@ class Service:
         self.definition = None
 
     def load_service_data(self):
-        with open(self.file_path) as f:
-            self.definition = json.load(f)
+        file_extension = os.path.splitext(self.file_path)[1].lower()
+
+        with open(self.file_path, "r") as f:
+            if file_extension == ".json":
+                self.definition = json.load(f)
+            elif file_extension in [".yml", ".yaml"]:
+                self.definition = yaml.safe_load(f)
+            else:
+                raise ValueError("Unsupported file format")
 
     def get_service_info(self):
         if self.definition is None:
@@ -71,10 +80,10 @@ class Service:
         res = {}
 
         res["name"] = self.name
-        res["description"] = self.definition["info"]["description"]
+        res["description"] = self.definition.get("info", {}).get("description", "")
 
-        res["version"] = self.definition["info"]["version"]
-        res["base_url"] = self.definition["servers"][0]["url"]
+        res["version"] = self.definition.get("info", {}).get("version", "")
+        res["base_url"] = (self.definition.get("servers", [{}])[0]).get("url", "")
 
         return res
 
@@ -121,8 +130,8 @@ class Service:
                 endpoint["path"] = path
                 endpoint["method"] = method
 
-                endpoint["summary"] = method_dict["summary"]
-                endpoint["description"] = method_dict["description"]
+                endpoint["summary"] = method_dict.get("summary", "")
+                endpoint["description"] = method_dict.get("description", "")
 
                 # let's resolve at least the parameters if they exist
                 if "parameters" in method_dict:
@@ -135,7 +144,9 @@ class Service:
 
                 endpoint["embedding"] = to_binary(np.array([]))
                 try:
-                    endpoint["embedding"] = to_binary(embedding(endpoint["definition"]))
+                    endpoint["embedding"] = to_binary(
+                        get_embedding(endpoint["definition"])
+                    )
                 except ValueError as e:
                     print(f"skip embedding {path}: {e}")
 

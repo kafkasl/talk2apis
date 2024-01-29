@@ -4,7 +4,9 @@ import numpy as np
 from typing import List, Dict
 
 from openai import OpenAI
-from tiktoken import encoding_for_model
+from tiktoken import encoding_for_model, get_encoding
+
+DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 
 
 def to_binary(embedding: np.ndarray) -> bytes:
@@ -19,6 +21,10 @@ def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 
+def get_token_encoder(model):
+    return encoding_for_model(model) if "gpt" in model else get_encoding("cl100k_base")
+
+
 def count_tokens(input_string: str, model: str) -> int:
     """
     Counts the number of tokens in a given string.
@@ -29,11 +35,11 @@ def count_tokens(input_string: str, model: str) -> int:
     Returns:
     The number of tokens in the input string.
     """
-    encoder = encoding_for_model(model)
+    encoder = get_token_encoder(model)
     return len(encoder.encode(input_string, disallowed_special=()))
 
 
-def gen_embedding(text: str, model="text-embedding-ada-002", **kwargs) -> List[float]:
+def get_embedding(text: str, model=DEFAULT_EMBEDDING_MODEL, **kwargs) -> List[float]:
     client = OpenAI()
     # replace newlines, which can negatively affect performance.
     text = text.replace("\n", " ")
@@ -50,7 +56,7 @@ def gen_embedding(text: str, model="text-embedding-ada-002", **kwargs) -> List[f
 
 def generate_embeddings(endpoints: Dict) -> Dict:
     def get_embedding(endpoint):
-        return endpoint["path"], gen_embedding(endpoint)
+        return endpoint["path"], get_embedding(endpoint)
 
     return dict(map(get_embedding, endpoints))
 
