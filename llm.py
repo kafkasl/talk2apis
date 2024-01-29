@@ -167,7 +167,6 @@ def render(template: str, args: Dict) -> str:
 
 def code_gen(prompt, service, token):
     # Example usage
-    service = "GitHub v3 REST API"  # Replace with your actual service name
     embeddings = APIEndpoints.get_embeddings_for_service(service)
 
     prompt_embedding = get_embedding(prompt)

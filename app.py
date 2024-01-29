@@ -127,7 +127,7 @@ def home():
 def chat():
     data = request.get_json()
 
-    if "service" not in data or data["service"] != "github":
+    if "service" not in data:
         response = {"error": "Bad parameters: missing or invalid service"}
         return jsonify(response), 400
 

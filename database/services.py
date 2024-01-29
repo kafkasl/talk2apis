@@ -40,10 +40,16 @@ class APIEndpoints(db.Model):
     embedding = db.Column(BLOB)
 
     @classmethod
-    def get_embeddings_for_service_name(
-        cls, service_name: str
-    ) -> Dict[str, np.ndarray]:
+    def get_embeddings_for_service(cls, service_name: str) -> Dict[str, np.ndarray]:
         # Find the service by name
+        all_services = Services.query.all()
+
+        print("All services in the database:")
+        for service in all_services:
+            print(
+                f"Service ID: {service.id}, Name: {service.name}, Description: {service.description}"
+            )
+
         service = Services.query.filter_by(name=service_name).one()
 
         # Extract embeddings

@@ -4,6 +4,7 @@ import argparse
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
+from dotenv import load_dotenv
 
 from openapi.service import Service
 from database.services import (
@@ -20,7 +21,9 @@ from embeddings import to_binary
 
 def main(files, recreate=False):
     # Connect to the SQLite database
-    engine = create_engine("sqlite:///apis.db")
+    load_dotenv()
+    db_uri = os.getenv("SQLALCHEMY_APIS_DATABASE_URI", "sqlite:///apis.db")
+    engine = create_engine(db_uri)
     Session = sessionmaker(bind=engine)
     session = Session()
 
