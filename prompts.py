@@ -1,12 +1,9 @@
-
-
-
 select_endpoint = f"""
     Instruct:
 
-    Given a user porpmt and the description of multiple endpoints, select the ones that should be called to resolve the prompt.
+    Given a user prompt and the description of multiple endpoints, select the ones that should be called to resolve the prompt.
     If no endpoint is relevant, reply with NONE.
-    
+
     Examples:
         user prompt: "Give me the open issues in the repository mosaic"
         endpoint:
@@ -17,7 +14,7 @@ select_endpoint = f"""
 
         answer: YES
 
-        
+
 
         user prompt: "Give me the open issues in the repository myorg/myrepo"
         endpoint:
@@ -27,11 +24,11 @@ select_endpoint = f"""
             Description: Get the authenticated user
 
         answer: NO
-    
-        
+
+
     Remarks: If the endpoint is relevant to solve the user prompt reply ONLY with a YES, otherwise reply ONLY with NO.
     Reply with only one word: 'YES' or 'NO'. DO NOT ADD ANY EXTRA TEXT.
-    
+
     user prompt: '{user_prompt}'
     endpoint:
         Method: {endpoint['method']}
@@ -41,5 +38,5 @@ select_endpoint = f"""
 
     answer:
 
-    OUTPUT: 
+    OUTPUT:
 """

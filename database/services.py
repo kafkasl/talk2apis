@@ -1,7 +1,9 @@
 from database import db
 from sqlalchemy.dialects.sqlite import JSON, BLOB
 import numpy as np
-from typing import Dict
+from typing import Dict, List, Tuple
+
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class Services(db.Model):
@@ -40,7 +42,9 @@ class APIEndpoints(db.Model):
     embedding = db.Column(BLOB)
 
     @classmethod
-    def get_embeddings_for_service(cls, service_name: str) -> Dict[str, np.ndarray]:
+    def get_embeddings_for_service(
+        cls, service_name: str
+    ) -> List[Tuple[object, np.ndarray]]:
         # Find the service by name
         all_services = Services.query.all()
 
@@ -54,13 +58,23 @@ class APIEndpoints(db.Model):
 
         # Extract embeddings
         db_endpoints = cls.query.filter_by(service_id=service.id).all()
-        embeddings = {
-            endpoint.path: np.frombuffer(endpoint.embedding)
+        embeddings = [
+            (endpoint, np.frombuffer(endpoint.embedding))
             for endpoint in db_endpoints
             if endpoint.embedding
-        }
+        ]
 
         return embeddings
+
+    @classmethod
+    def get_endpoint_by_path(cls, endpoint_path: str):
+        try:
+            # Find the endpoint by path
+            endpoint = cls.query.filter_by(path=endpoint_path).one()
+            return endpoint
+        except NoResultFound:
+            print(f"No endpoint found with path: {endpoint_path}")
+            return None
 
 
 class APIParameters(db.Model):

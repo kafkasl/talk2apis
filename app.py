@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify, request
 from database.database import init_db
 import openai
-from llm import code_gen
+from ai.llm import generate_service_call
 
 load_dotenv()
 
@@ -95,7 +95,7 @@ def llm_generate_script(service, token, user_prompt, endpoints):
 
 def process_user_prompt(service, token, prompt):
     try:
-        code_gen(prompt, service, token)
+        generate_service_call(prompt, service, token)
         # TODO: ask the llm if this request makes sense
 
         # split_in_tasks = llm_get_prompt_tasks(service, prompt)
@@ -124,7 +124,7 @@ def home():
 
 
 @app.route("/gen-script", methods=["POST"])
-def chat():
+async def chat():
     data = request.get_json()
 
     if "service" not in data:
@@ -142,7 +142,8 @@ def chat():
     service = data["service"]
     token = data["token"]
     prompt = data["prompt"]
-    code, error = process_user_prompt(service, token, prompt)
+    code, error = await generate_service_call(prompt, service, token)
+    # code, error = await process_user_prompt(service, token, prompt)
     if error is not None:
         response = {"error": error}
         return jsonify(response), 500
