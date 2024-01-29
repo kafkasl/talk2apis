@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify, request
-from database.db import init_db
+from database.database import init_db
 import openai
 from llm import code_gen
 
