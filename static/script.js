@@ -36,13 +36,15 @@ $(document).ready(function() {
                 editor.setValue(response.code, -1); // Update ACE Editor content
             },
             error: function(error) {
-                console.error(error);
-                $('#output').text('Error generating code.');
+                console.error('error: /gen-script:', error);
+                $('#output').text('Error generating code.', error);
             }
         });
     });
 
     $('#run-button').on('click', async function() {
+        $('#output').text("Running...");
+
         let pyodide = await loadPyodide();
         // Load the 'requests' package
         await pyodide.loadPackage('requests');
@@ -50,17 +52,26 @@ $(document).ready(function() {
         let pythonCode = editor.getValue();
         console.log(pythonCode);
 
-
-        // Redirect print output
+        // Redirect print output and error output
         pyodide.runPython(`
             import io, sys
             sys.stdout = io.StringIO()
+            sys.stderr = io.StringIO()
         `);
 
-        pyodide.runPython(pythonCode);
+        try {
+            pyodide.runPython(pythonCode);
+        } catch (err) {
+            $('#output').text(err.message);
+            return;
+        }
 
         let output = pyodide.runPython('sys.stdout.getvalue()');
-        $('#output').text(output);
+        let error = pyodide.runPython('sys.stderr.getvalue()');
 
+        // Combine output and error
+        let combinedOutput = output + '\n' + error;
+
+        $('#output').text(combinedOutput);
     });
 });

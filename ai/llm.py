@@ -260,13 +260,12 @@ async def generate_task_code(
     {{ token }}
     =====
 
-    Your goal is to generate a valid Python code that correctly solves the problem and retrieves all the outputs from the endpoint. Always use pagination to retrieve all data.
-
+    Your goal is to generate a valid Python code that correctly solves the problem.
     Guidelines:
     - Make sure to include all the necessary module imports, properly initialize the variables, and address the problem constraints.
     - The code needs to be self-contained, and executable as-is.
     - The output format must match the required outputs.
-
+    - Make sure to retrieve all pages in requests that return paginated results.
 
     The generated code must follow this structure:
     ```
@@ -295,7 +294,7 @@ async def generate_task_code(
             "description": description,
             "token": token if token else "no token provided",
             "auth_details": auth_details,
-            "endpoints_definition": endpoints_definition,
+            "endpoints_definition": endpoints_definition,  # TODO this is not returning the real data, define STR method endpoints_definition,
         },
     )
     code_response, finish_reason = await ai_handler.chat_completion(
