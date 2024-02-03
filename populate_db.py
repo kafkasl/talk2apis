@@ -16,13 +16,16 @@ from database.services import (
     DeleteService,
 )
 
-from embeddings import to_binary
+from ai.embeddings import to_binary
+
+load_dotenv()
 
 
 def main(files, recreate=False):
     # Connect to the SQLite database
-    load_dotenv()
-    db_uri = os.getenv("SQLALCHEMY_APIS_DATABASE_URI", "sqlite:///apis.db")
+    # db_uri = os.getenv("SQLALCHEMY_APIS_DATABASE_URI")
+    # print(db_uri)
+    db_uri = "sqlite:///instance/apis.db"
     engine = create_engine(db_uri)
     Session = sessionmaker(bind=engine)
     session = Session()
@@ -110,7 +113,7 @@ def main(files, recreate=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--definition_files", nargs="*", help="A list of definition files"
+        "--definition_files", nargs="*", help="A list of definition files", default=[]
     )
     parser.add_argument(
         "--recreate", action="store_true", help="Overwrite db entries for existing apis"
@@ -126,6 +129,6 @@ if __name__ == "__main__":
     if len(files) == 0:
         definitions_dir = os.path.join(os.getcwd(), "openapi/definitions")
         # files = glob.glob(os.path.join(definitions_dir, "github.json"))
-        files = glob.glob(os.path.join(definitions_dir, "*"))
-
+        files = glob.glob(os.path.join(definitions_dir, "*.json"))
+        files.extend(glob.glob(os.path.join(definitions_dir, "*.yml")))
     main(files, recreate)

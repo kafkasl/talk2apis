@@ -66,16 +66,6 @@ class APIEndpoints(db.Model):
 
         return embeddings
 
-    @classmethod
-    def get_endpoint_by_path(cls, endpoint_path: str):
-        try:
-            # Find the endpoint by path
-            endpoint = cls.query.filter_by(path=endpoint_path).one()
-            return endpoint
-        except NoResultFound:
-            print(f"No endpoint found with path: {endpoint_path}")
-            return None
-
 
 class APIParameters(db.Model):
     __tablename__ = "api_parameters"  # Explicitly define the table name

@@ -4,18 +4,33 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
     <!-- Include your custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+
+
+    <!-- ACE Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+
+    <!-- PyScript -->
+    <!-- <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script> -->
+
+
+    <!-- Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
 </head>
 <body>
     <div id="app">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col-12 col-md-6 col-lg-6">
                     <form id="myForm">
                         <div class="form-group">
                             <label for="service">Service</label>
-                            <input type="text" class="form-control" id="service" placeholder="Enter service">
+                            <input type="text" class="form-control" id="service" placeholder="Enter service" value="github">
                         </div>
                         <div class="form-group">
                             <label for="token">Token</label>
@@ -23,14 +38,23 @@
                         </div>
                         <div class="form-group">
                             <label for="prompt">Prompt</label>
-                            <textarea class="form-control" id="prompt" rows="3" placeholder="Enter prompt"></textarea>
+                            <textarea class="form-control" id="prompt" rows="3" placeholder="Enter prompt">Give me the list of repositories in GitHub that kafkasl contributed to</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
                 <div class="col-12 col-md-6 col-lg-6">
-                    <div id="editor"></div>
-                    <button id="run-button" class="btn btn-secondary">Run Code</button>
+                    <div>
+                        <!-- Placeholder for ACE Editor -->
+                        <div id="editor" style="min-height: 500px; width: 100%;">print('Hello, World!')</div>
+                        <button id="run-button" class="btn btn-secondary">Run Code</button>
+                        <py-script>print(2)</py-script>
+                    </div>
+                    <div>
+                        <!-- Placeholder for PyScript output -->
+                        <div id="output"></div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -41,11 +65,13 @@
 
     <!-- Include Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
-    <!-- Include ACE editor -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js" integrity="sha512-hWCQiPFpU0dM1jkN2dkt/OrdSXO4KN5y2utMvF0ZkacWmRvbOlEygqBW0YiJwq/nn6iywh4XnMGMG6ESQYM7WA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" /> -->
 
     <!-- Include your custom JS -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+
 </body>
 </html>

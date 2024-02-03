@@ -1,5 +1,5 @@
 from jinja2 import Template
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from .handler import AiHandler
 from auth import auth_info
 import yaml
@@ -101,12 +101,11 @@ async def self_reflection(description: str, model: str = DEFAULT_MODEL) -> str:
 async def get_task_endpoints(
     prompt: str,
     service: str,
-    endpoints_ranking: List[Dict, float],
     return_best_only: bool = True,
     model: str = DEFAULT_MODEL,
 ) -> List[str]:
     temperature = 0.0
-    code_prompt = """You are given a task description, and a list of candidate endpoints to solve the task. Then endpoints are ranked by similarity to the task description.
+    task_endpoints_prompt = """You are given a task description, and a list of candidate endpoints to solve the task. Then endpoints are ranked by similarity to the task description.
 
     problem description:
     =====
@@ -153,14 +152,15 @@ async def get_task_endpoints(
         return []
 
     if return_best_only:
-        return [ranked_endpoints[0][0].definition]
+        best = ranked_endpoints[0][0]
+        return [best]
 
     user_prompt = render(
-        code_prompt,
+        task_endpoints_prompt,
         {
             "description": prompt,
             "endpoints_ranking": "\n".join(
-                [f"{e['path']}, {e['description']}, {r}" for e, r in endpoints_ranking]
+                [f"{e['path']}, {e['description']}, {r}" for e, r in ranked_endpoints]
             ),
         },
     )
@@ -171,41 +171,93 @@ async def get_task_endpoints(
         temperature=temperature,
     )
 
-    endpoints_list = yaml.safe_load(endpoints_response)["endpoints"]
-    return endpoints_list
+    endpoints_paths = yaml.safe_load(endpoints_response)["endpoints"]
+    endpoints_defs = [e for e, _ in ranked_endpoints if e["path"] in endpoints_paths]
+    return endpoints_defs
 
 
-async def generate_code(
+async def get_auth_info(
     description: str,
-    endpoint_definition: str,
+    endpoints_definition: str = [],
+    service: str = "",
+    use_llm=False,
+    model: str = DEFAULT_MODEL,
+) -> str:
+    auth_prompt = """You are given a task description, the definition of an API endpoint required to solve the task (or part of it), the description of the auth needed by the service (if available).
+    problem description:
+
+    =====
+    {{ description }}
+    =====
+
+    API endpoints definition:
+    =====
+    {{ endpoints_definition }}
+    =====
+
+    service authentication details:
+    =====
+    {{ auth_details }}
+    =====
+
+    Your goal is to decide whether it is necessary to use authentication in this endpoint. Answer as follows:
+    * If authentication is needed, provide the necessary details to authenticate the request.
+    * If no authentication is needed, reply "no authentication needed"
+
+    """
+
+    if not use_llm:
+        return auth_info[service]
+
+    user_prompt = render(
+        auth_prompt,
+        {
+            "description": description,
+            "endpoint_definition": endpoints_definition,
+        },
+    )
+
+    auth_response, finish_reason = await ai_handler.chat_completion(
+        model=model,
+        system="",
+        user=user_prompt,
+        temperature=0,
+    )
+
+    return auth_response
+
+
+async def generate_task_code(
+    description: str,
+    endpoints_definition: List[Dict],
     auth_details: str,
-    outputs: str,
+    token: str,
     model: str = DEFAULT_MODEL,
 ) -> str:
     temperature = 0.2
     frequency_penalty = 0.1
     system_prompt = """"""
 
-    code_prompt = """You are given a problem description, the required outputs of this task, the documentation of the endpoint to be used, and the details to authenticate if needed.
+    code_prompt = """You are given a problem description, the definition of the endpoint(s), and the token and details needed to authenticate.
 
     problem description:
     =====
     {{ description }}
     =====
 
-    required outputs:
+    endpoints definition:
     =====
-    {{ outputs }}
-    =====
-
-    endpoint documentation:
-    =====
-    {{ endpoint_documentation }}
+    {{ endpoints_definition }}
     =====
 
     service authentication details:
     =====
     {{ auth_details }}
+    =====
+
+    auth token:
+    =====
+    {{ token }}
     =====
 
     Your goal is to generate a valid Python code that correctly solves the problem and retrieves all the outputs from the endpoint. Always use pagination to retrieve all data.
@@ -214,7 +266,6 @@ async def generate_code(
     - Make sure to include all the necessary module imports, properly initialize the variables, and address the problem constraints.
     - The code needs to be self-contained, and executable as-is.
     - The output format must match the required outputs.
-    - Whenever you need an auth token assume it is already defined and available in the environment variable TOKEN.
 
 
     The generated code must follow this structure:
@@ -238,15 +289,13 @@ async def generate_code(
     ```python
     """
 
-    ai_handler = AiHandler()
-
     user_prompt = render(
         code_prompt,
         {
             "description": description,
-            "outputs": outputs,
+            "token": token if token else "no token provided",
             "auth_details": auth_details,
-            "endpoint_documentation": endpoint_definition,
+            "endpoints_definition": endpoints_definition,
         },
     )
     code_response, finish_reason = await ai_handler.chat_completion(
@@ -281,10 +330,10 @@ async def generate_service_call(prompt, service, token):
         endpoint_definition = ""
         auth_details = ""
 
-    code = await generate_code(
+    code = await generate_task_code(
         prompt,
         endpoint_definition=endpoint_definition,
-        outputs=outputs,
+        token=token,
         auth_details=auth_details,
     )
 

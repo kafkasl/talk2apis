@@ -5,6 +5,10 @@ from database.database import init_db
 import openai
 from ai.llm import generate_service_call
 
+# from ai.llm import generate_service_call
+
+from ai import llm
+
 load_dotenv()
 
 db_uri = os.getenv("SQLALCHEMY_APIS_DATABASE_URI")
@@ -56,35 +60,6 @@ def llm_get_prompt_tasks(service, prompt):
     return tasks.split("\n")
 
 
-def llm_get_prompt_tags(service, user_prompt):
-    prompt = f"""
-    Given the API for a service and a user prompt reply with the list of tags should be
-    used to find the relevant endpoints.
-
-
-    Example 1:
-        Service: Github
-        Task: Get Authenticated user
-
-        Method: Get
-        Tags: Get user
-
-    Example 2:
-        Service: Github
-        Task: List user repositories
-
-        Method: Get
-        Tags: GET repo details contributors
-
-
-    Service: {service}
-    User prompt: {user_prompt}
-    Tags:
-    """
-
-    return get_completion(prompt)
-
-
 def llm_get_task_endpoints(service, task):
     return []
 
@@ -93,29 +68,52 @@ def llm_generate_script(service, token, user_prompt, endpoints):
     pass
 
 
-def process_user_prompt(service, token, prompt):
+async def process_user_prompt(service, token, prompt):
     try:
-        generate_service_call(prompt, service, token)
-        # TODO: ask the llm if this request makes sense
+        endpoints = await llm.get_task_endpoints(
+            service=service, prompt=prompt, return_best_only=True
+        )
 
-        # split_in_tasks = llm_get_prompt_tasks(service, prompt)
-        # if len(tasks) == 0:
-        #     return None, f"No task for the given prompt {prompt}"
+        auth_info = await llm.get_auth_info(
+            description=prompt, service=service, use_llm=False
+        )
 
-        # endpoints = []
-        # for task in tasks:
-        #     llm_get_endpoints = llm_get_task_endpoints(service, task)
-        #     endpoints += llm_get_endpoints
+        code = await llm.generate_task_code(
+            description=prompt,
+            auth_details=auth_info,
+            endpoints_definition=endpoints,
+            token=token,
+        )
 
-        # code = llm_generate_script(service, token, prompt, endpoints)
-
-        # return code, None
-
+        return code, None
     except Exception as e:
         print(e)
-        return None, "Error processing user prompt"
+        return None, e
 
-    # Filter relevant endpoints from the database
+
+# def process_user_prompt(service, token, prompt):
+#     try:
+# generate_service_call(prompt, service, token)
+# TODO: ask the llm if this request makes sense
+
+# split_in_tasks = llm_get_prompt_tasks(service, prompt)
+# if len(tasks) == 0:
+#     return None, f"No task for the given prompt {prompt}"
+
+# endpoints = []
+# for task in tasks:
+#     llm_get_endpoints = llm_get_task_endpoints(service, task)
+#     endpoints += llm_get_endpoints
+
+# code = llm_generate_script(service, token, prompt, endpoints)
+
+# return code, None
+
+# except Exception as e:
+#     print(e)
+#     return None, "Error processing user prompt"
+
+# Filter relevant endpoints from the database
 
 
 @app.route("/")
@@ -142,8 +140,8 @@ async def chat():
     service = data["service"]
     token = data["token"]
     prompt = data["prompt"]
-    code, error = await generate_service_call(prompt, service, token)
-    # code, error = await process_user_prompt(service, token, prompt)
+    code, error = await process_user_prompt(prompt=prompt, service=service, token=token)
+    # code, error = await generate_service_call(prompt, service, token)
     if error is not None:
         response = {"error": error}
         return jsonify(response), 500

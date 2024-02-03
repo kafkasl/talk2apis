@@ -1,12 +1,18 @@
 import json
-from embeddings import get_embedding, to_binary
+from ai.embeddings import get_embedding, to_binary
 from tqdm import tqdm
 import numpy as np
 import yaml
 import os
 
 
-def resolve_refs(path, definition, schema, parent_refs=None):
+def resolve_refs(
+    path,
+    definition,
+    schema,
+    parent_refs=None,
+    only_schema_paths=False,
+):
     """
     In OpenAPI, $ref is used to reference a definition elsewhere in the document,
     promoting reusability and DRY principles.
@@ -28,10 +34,11 @@ def resolve_refs(path, definition, schema, parent_refs=None):
         # we should be resolving only references in schema, but currently we are doing
         # only in parameters (which don't include exmaples) so we can skip checking for
         # the schema keyword
-        if "$ref" in definition:  # and "schema" in path:
+        if "$ref" in definition and (not only_schema_paths or "schema" in path):
             ref_path = definition["$ref"]
             if ref_path in parent_refs:
-                raise ValueError(f"Circular reference detected: {ref_path}")
+                print(f"Circular reference detected: {ref_path}")
+                return ref_path
             ref_path_parts = ref_path.split("/")[
                 1:
             ]  # Split and ignore the first '#' element
@@ -39,17 +46,25 @@ def resolve_refs(path, definition, schema, parent_refs=None):
             for part in ref_path_parts:
                 ref_definition = ref_definition[part]
             resolved_definition = resolve_refs(
-                path + [ref_path], ref_definition, schema, parent_refs | {ref_path}
+                path + [ref_path],
+                ref_definition,
+                schema,
+                parent_refs | {ref_path},
+                only_schema_paths,
             )  # Recursively resolve nested references
             return resolved_definition
         else:
             return {
-                key: resolve_refs(path + [key], value, schema, parent_refs)
+                key: resolve_refs(
+                    path + [key], value, schema, parent_refs, only_schema_paths
+                )
                 for key, value in definition.items()
             }
     elif isinstance(definition, list):
         return [
-            resolve_refs(path + [str(index)], item, schema, parent_refs)
+            resolve_refs(
+                path + [str(index)], item, schema, parent_refs, only_schema_paths
+            )
             for index, item in enumerate(definition)
         ]
     else:
@@ -124,7 +139,11 @@ class Service:
         for path, endpoint_dict in tqdm(
             list(self.definition["paths"].items()), desc="Processing endpoints"
         ):
+            # if path != "/pipelines":
+            #     continue
             for method, method_dict in endpoint_dict.items():
+                # if method != "get":
+                #     continue
                 endpoint = {}
 
                 endpoint["path"] = path
@@ -139,16 +158,24 @@ class Service:
                         path.split("/"), method_dict["parameters"], self.definition
                     )
 
+                if "responses" in method_dict:
+                    method_dict["responses"] = resolve_refs(
+                        path.split("/"),
+                        method_dict["responses"],
+                        self.definition,
+                        only_schema_paths=True,
+                    )
+
                 endpoint["parameters"] = self.parse_parameters(path, method_dict)
                 endpoint["definition"] = json.dumps(method_dict)
 
-                endpoint["embedding"] = to_binary(np.array([]))
                 try:
                     endpoint["embedding"] = to_binary(
                         get_embedding(endpoint["definition"])
                     )
                 except ValueError as e:
                     print(f"skip embedding {path}: {e}")
+                    endpoint["embedding"] = to_binary(np.array([]))
 
                 endpoints.append(endpoint)
 
