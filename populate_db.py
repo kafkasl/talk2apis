@@ -11,7 +11,7 @@ from database.services import (
     Services,
     ServiceCategories,
     ServiceAPIs,
-    APIEndpoints,
+    APIEndpoint,
     APIParameters,
     DeleteService,
 )
@@ -77,7 +77,7 @@ def main(files, recreate=False):
 
         # Create service endpoints
         for endpoint in service.get_service_endpoints():
-            db_endpoint = APIEndpoints(
+            db_endpoint = APIEndpoint(
                 service_id=db_service.id,
                 api_id=db_service_api.id,
                 path=endpoint["path"],

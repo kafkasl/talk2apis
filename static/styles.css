@@ -1,10 +1,10 @@
 body {
-    padding-top: 2rem;
+    /* padding-top: 2rem; */
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.container {
-    max-width: 960px;
+.container-fluid {
+    max-width: 95%;
 }
 
 h1, .h1 {
@@ -78,4 +78,27 @@ h1, .h1 {
 
 .col-12.col-md-6.col-lg-6:last-child {
     padding-left: 20px;
+}
+
+.card {
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    margin-top: 1rem;
+}
+
+#run-button {
+    margin-top: 1rem;
+}
+
+
+button[type="submit"] {
+    border-bottom: 1px solid #ced4da;
+    margin-bottom: 1rem;
+}
+
+header {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #ced4da;
+    margin-bottom: 1rem;
 }

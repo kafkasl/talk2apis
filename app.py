@@ -71,7 +71,7 @@ def llm_generate_script(service, token, user_prompt, endpoints):
 async def process_user_prompt(service, token, prompt):
     try:
         endpoints = await llm.get_task_endpoints(
-            service=service, prompt=prompt, return_best_only=True
+            service=service, prompt=prompt, return_best_only=False
         )
 
         auth_info = await llm.get_auth_info(
@@ -81,14 +81,15 @@ async def process_user_prompt(service, token, prompt):
         code = await llm.generate_task_code(
             description=prompt,
             auth_details=auth_info,
-            endpoints_definition=endpoints,
+            endpoints=endpoints,
             token=token,
         )
 
-        return code, None
+        response = {"code": code, "endpoints": endpoints}
+
+        return response, None
     except Exception as e:
-        print(e)
-        return None, e
+        return None, {"error": e}
 
 
 # def process_user_prompt(service, token, prompt):
@@ -140,15 +141,13 @@ async def chat():
     service = data["service"]
     token = data["token"]
     prompt = data["prompt"]
-    code, error = await process_user_prompt(prompt=prompt, service=service, token=token)
+    response, error = await process_user_prompt(
+        prompt=prompt, service=service, token=token
+    )
     # code, error = await generate_service_call(prompt, service, token)
     if error is not None:
         response = {"error": error}
         return jsonify(response), 500
-
-    response = {
-        "code": code,
-    }
 
     return jsonify(response)
 
@@ -157,4 +156,4 @@ if __name__ == "__main__":
     debug = os.getenv("DEBUG")
     port = os.getenv("HTTP_PORT")
 
-    app.run(debug=debug, port=port)
+    app.run(debug=debug, port=port, use_reloader=False)

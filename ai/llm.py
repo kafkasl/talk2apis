@@ -4,9 +4,8 @@ from .handler import AiHandler
 from auth import auth_info
 import yaml
 
-# from alpha_codium.llm.ai_handler import AiHandler
+from database.services import APIEndpoint
 from ai.embeddings import get_embedding, cosine_similarity
-from database.services import APIEndpoints
 
 DEFAULT_MODEL = "gpt-4"
 ai_handler = AiHandler()
@@ -103,8 +102,7 @@ async def get_task_endpoints(
     service: str,
     return_best_only: bool = True,
     model: str = DEFAULT_MODEL,
-) -> List[str]:
-    temperature = 0.0
+) -> List[dict]:
     task_endpoints_prompt = """You are given a task description, and a list of candidate endpoints to solve the task. Then endpoints are ranked by similarity to the task description.
 
     problem description:
@@ -112,9 +110,9 @@ async def get_task_endpoints(
     {{ description }}
     =====
 
-    endpoints ranked by similarity:
+    endpoints:
     =====
-    {{ endpoints_ranking }}
+    {{ endpoints }}
     =====
 
 
@@ -129,9 +127,9 @@ async def get_task_endpoints(
     Example YAML output:
     ```yaml
     endpoints:
-    - path1
-      path2
-    ...
+    - /path/to/endpoint1
+    - /path/to/endpoint2
+    - /path/to/endpoint3
     ```
 
     Answer:
@@ -139,10 +137,10 @@ async def get_task_endpoints(
     """
 
     try:
-        embeddings = APIEndpoints.get_embeddings_for_service(service)
+        embeddings = APIEndpoint.get_embeddings_for_service(service)
         prompt_embedding = get_embedding(prompt)
         ranked_endpoints = rank_closest_embeddings(
-            prompt_embedding, embeddings, top_k=5
+            prompt_embedding, embeddings, top_k=40
         )
     except Exception as e:
         print(f"Error retrieving endpoint info: {e}")
@@ -151,28 +149,31 @@ async def get_task_endpoints(
     if len(ranked_endpoints) < 1:
         return []
 
+    print("\n".join([e.path for e, _ in ranked_endpoints]))
     if return_best_only:
         best = ranked_endpoints[0][0]
-        return [best]
+        return [best.to_dict()]
 
-    user_prompt = render(
-        task_endpoints_prompt,
-        {
-            "description": prompt,
-            "endpoints_ranking": "\n".join(
-                [f"{e['path']}, {e['description']}, {r}" for e, r in ranked_endpoints]
-            ),
-        },
-    )
+    # We could add the parametesrs also to the request, but then they might become too large
+    params = {
+        "description": prompt,
+        "endpoints": [
+            f"[{e.method}]{e.path}: {e.description}" for e, _ in ranked_endpoints
+        ],
+    }
+
+    user_prompt = render(task_endpoints_prompt, params)
     endpoints_response, finish_reason = await ai_handler.chat_completion(
         model=model,
         system="",
         user=user_prompt,
-        temperature=temperature,
+        temperature=0.0,
     )
 
     endpoints_paths = yaml.safe_load(endpoints_response)["endpoints"]
-    endpoints_defs = [e for e, _ in ranked_endpoints if e["path"] in endpoints_paths]
+    endpoints_defs = [
+        e.to_dict() for e, _ in ranked_endpoints if e.path in endpoints_paths
+    ]
     return endpoints_defs
 
 
@@ -229,15 +230,11 @@ async def get_auth_info(
 
 async def generate_task_code(
     description: str,
-    endpoints_definition: List[Dict],
+    endpoints: List[dict],
     auth_details: str,
     token: str,
     model: str = DEFAULT_MODEL,
 ) -> str:
-    temperature = 0.2
-    frequency_penalty = 0.1
-    system_prompt = """"""
-
     code_prompt = """You are given a problem description, the definition of the endpoint(s), and the token and details needed to authenticate.
 
     problem description:
@@ -294,15 +291,16 @@ async def generate_task_code(
             "description": description,
             "token": token if token else "no token provided",
             "auth_details": auth_details,
-            "endpoints_definition": endpoints_definition,  # TODO this is not returning the real data, define STR method endpoints_definition,
+            "endpoints_definition": endpoints,
         },
     )
+
     code_response, finish_reason = await ai_handler.chat_completion(
         model=model,
-        system=system_prompt,
+        system="",
         user=user_prompt,
-        temperature=temperature,
-        frequency_penalty=frequency_penalty,
+        temperature=0.2,
+        frequency_penalty=0.1,
     )
 
     return code_response
@@ -313,7 +311,7 @@ async def generate_service_call(prompt, service, token):
 
     try:
         # 1. Get the most probable endpoints needed to solve the problem
-        embeddings = APIEndpoints.get_embeddings_for_service(service)
+        embeddings = APIEndpoint.get_embeddings_for_service(service)
         prompt_embedding = get_embedding(prompt)
         ranked_endpoints = rank_closest_embeddings(prompt_embedding, embeddings)
 

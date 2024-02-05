@@ -23,6 +23,9 @@
 
 </head>
 <body>
+    <header>
+        <h1 class="text-center">Talk2APIs</h1>
+    </header>
     <div id="app">
         <div class="container-fluid">
             <div class="row justify-content-center">
@@ -34,14 +37,27 @@
                         </div>
                         <div class="form-group">
                             <label for="token">Token</label>
-                            <input type="text" class="form-control" id="token" placeholder="Enter token">
+                            <input type="text" class="form-control" id="token" placeholder="Enter token" value="YOUR_TOKEN">
                         </div>
                         <div class="form-group">
                             <label for="prompt">Prompt</label>
-                            <textarea class="form-control" id="prompt" rows="3" placeholder="Enter prompt">Give me the list of repositories in GitHub that kafkasl contributed to</textarea>
+                            <textarea class="form-control" id="prompt" rows="3" placeholder="Enter prompt">Give me a list of all the subscriptions for kafkasl in the format `owner/name`.</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
+                    <div class="card">
+                        <div class="card-header" id="endpointsHeading">
+                          <h5 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#endpointsCollapse" aria-expanded="false" aria-controls="endpointsCollapse">
+                              Endpoints considered
+                            </button>
+                          </h5>
+                        </div>
+                        <div id="endpointsCollapse" class="collapse" aria-labelledby="endpointsHeading">                          <div class="card-body">
+                            <div id="endpoints"></div>
+                          </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-12 col-md-6 col-lg-6">
                     <div>

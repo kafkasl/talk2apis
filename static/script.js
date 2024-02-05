@@ -34,6 +34,16 @@ $(document).ready(function() {
             success: function(response) {
                 // Set the returned code in the ACE Editor
                 editor.setValue(response.code, -1); // Update ACE Editor content
+
+            // Handle the endpoints array
+            var endpointsElement = $('#endpoints');
+            endpointsElement.empty(); // Clear the previous endpoints
+            response.endpoints.forEach(function(endpoint) {
+                // Convert the endpoint object to a nicely formatted JSON string
+                var endpointStr = JSON.stringify(endpoint, null, 2);
+                // Append the endpoint string to the endpoints element
+                endpointsElement.append('<pre>' + endpointStr + '</pre>');
+            });
             },
             error: function(error) {
                 console.error('error: /gen-script:', error);
@@ -69,9 +79,10 @@ $(document).ready(function() {
         let output = pyodide.runPython('sys.stdout.getvalue()');
         let error = pyodide.runPython('sys.stderr.getvalue()');
 
-        // Combine output and error
-        let combinedOutput = output + '\n' + error;
-
-        $('#output').text(combinedOutput);
+        if (output) {
+            $('#output').text(output);
+        } else {
+            $('#output').text(error);
+        }
     });
 });
