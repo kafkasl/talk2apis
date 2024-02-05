@@ -1,6 +1,8 @@
 .PHONY: migrate
 message ?= Auto-generated migration
 
+run:
+	docker-compose up --build
 freeze:
 	pip freeze > requirements.txt
 install:

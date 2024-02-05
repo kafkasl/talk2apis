@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - SQLALCHEMY_APIS_DATABASE_URI=sqlite:////app/instance/apis.db
+      - VALIDATE_USER_PROMPT=true
+    volumes:
+      - .:/app
+      - ./instance:/app/instance # Ensure the database changes persist
