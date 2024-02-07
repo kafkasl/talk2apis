@@ -55,34 +55,31 @@ $(document).ready(function() {
     $('#run-button').on('click', async function() {
         $('#output').text("Running...");
 
-        let pyodide = await loadPyodide();
-        // Load the 'requests' package
-        await pyodide.loadPackage('requests');
-
         let pythonCode = editor.getValue();
         console.log(pythonCode);
 
-        // Redirect print output and error output
-        pyodide.runPython(`
-            import io, sys
-            sys.stdout = io.StringIO()
-            sys.stderr = io.StringIO()
-        `);
-
         try {
-            pyodide.runPython(pythonCode);
+            let response = await fetch('/run_code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: pythonCode })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            let result = await response.json();
+
+            if (result.output) {
+                $('#output').text(result.output);
+            } else {
+                $('#output').text(result.error);
+            }
         } catch (err) {
             $('#output').text(err.message);
-            return;
-        }
-
-        let output = pyodide.runPython('sys.stdout.getvalue()');
-        let error = pyodide.runPython('sys.stderr.getvalue()');
-
-        if (output) {
-            $('#output').text(output);
-        } else {
-            $('#output').text(error);
         }
     });
 });

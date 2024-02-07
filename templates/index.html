@@ -4,22 +4,13 @@
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+
     <!-- Include your custom CSS -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 
 
-
     <!-- ACE Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
-
-    <!-- PyScript -->
-    <!-- <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script> -->
-
-
-    <!-- Pyodide -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 
 </head>
 <body>
@@ -66,7 +57,7 @@
                         <button id="run-button" class="btn btn-secondary">Run Code</button>
                     </div>
                     <div>
-                        <!-- Placeholder for PyScript output -->
+                        <!-- Placeholder for server output -->
                         <div id="output"></div>
                     </div>
 
@@ -80,8 +71,6 @@
 
     <!-- Include Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-<!--
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" /> -->
 
     <!-- Include your custom JS -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
