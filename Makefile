@@ -8,7 +8,8 @@ freeze:
 install:
 	pip install -r requirements.txt%
 deploy:
-	rsync -avz --progress --exclude='*.pyc' --exclude='__pycache__/' --exclude='talk2apis/' . talk:/home/service/app
+	rsync -avz --progress --exclude='*.pyc' --exclude='__pycache__/' --exclude='talk2apis/' --exclude='.env' . talk:/home/service/app
+	ssh talk "cd /home/service/app && docker-compose down && docker-compose up --build -d"
 migrate:
 	alembic revision --autogenerate -m "$(message)"
 	alembic upgrade head

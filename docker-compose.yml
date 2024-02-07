@@ -11,3 +11,9 @@ services:
     volumes:
       - .:/app
       - ./instance:/app/instance # Ensure the database changes persist
+      - /var/run/docker.sock:/var/run/docker.sock # Add this line
+  code-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.code-runner
+    image: talk2apis-code-runner

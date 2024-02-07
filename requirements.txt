@@ -16,6 +16,7 @@ charset-normalizer==3.3.2
 click==8.1.7
 decorator==5.1.1
 distro==1.9.0
+docker==7.0.0
 exceptiongroup==1.2.0
 filelock==3.13.1
 Flask==3.0.1

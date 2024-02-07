@@ -4,6 +4,7 @@ from flask import Flask, render_template, jsonify, request
 from database.database import init_db
 import subprocess
 import uuid
+import docker
 
 from ai import llm
 
@@ -94,6 +95,7 @@ async def chat():
     )
     # code, error = await generate_service_call(prompt, service, token)
     if error is not None:
+        print(f"Error: {error}")
         response = {"error": error}
         return jsonify(response), 500
 
@@ -112,18 +114,24 @@ def run_code():
         file.write(code)
 
     try:
-        # Run the script in a separate process
-        # You can add limits and restrictions here
-        result = subprocess.run(
-            ["python", filename], capture_output=True, text=True, timeout=10
+        # Create a Docker client
+        client = docker.from_env()
+
+        # Run the script in a Docker container
+        result = client.containers.run(
+            "talk2apis-code-runner",  # Use the new Docker image
+            f"python {filename}",
+            remove=True,
+            volumes={os.environ["HOST_PROJECT_PATH"]: {"bind": "/app", "mode": "rw"}},
         )
 
-        # Capture standard output and errors
-        output = result.stdout
-        error = result.stderr
+        # Capture standard output
+        output = result.decode("utf-8")
+        error = None
 
-    except subprocess.TimeoutExpired:
-        output, error = None, "Error: Execution time exceeded limit."
+    except Exception as e:
+        output = None
+        error = str(e)
 
     finally:
         # Clean up: Remove the temporary file
