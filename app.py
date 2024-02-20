@@ -71,6 +71,11 @@ def home():
     return render_template("index.html")
 
 
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")  # Serve the FAQ content on this route
+
+
 @app.route("/gen-script", methods=["POST"])
 async def chat():
     data = request.get_json()
@@ -106,8 +111,14 @@ async def chat():
 def run_code():
     code = request.json.get("code")
 
+    scripts_folder = "user-scripts"
+    # Check if the directory exists
+    if not os.path.exists(scripts_folder):
+        # If not, create the directory
+        os.makedirs(scripts_folder)
+
     # Generate a random file name
-    filename = f"user-scripts/temp_script_{uuid.uuid4().hex}.py"
+    filename = f"{scripts_folder}/temp_script_{uuid.uuid4().hex}.py"
 
     # Save the code to a file
     with open(filename, "w") as file:

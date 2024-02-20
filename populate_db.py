@@ -128,7 +128,7 @@ if __name__ == "__main__":
     # in ./definitions
     if len(files) == 0:
         definitions_dir = os.path.join(os.getcwd(), "openapi/definitions")
-        # files = glob.glob(os.path.join(definitions_dir, "github.json"))
-        files = glob.glob(os.path.join(definitions_dir, "*.json"))
-        files.extend(glob.glob(os.path.join(definitions_dir, "*.yml")))
+        files = glob.glob(os.path.join(definitions_dir, "slack.json"))
+        # files = glob.glob(os.path.join(definitions_dir, "*.json"))
+        # files.extend(glob.glob(os.path.join(definitions_dir, "*.yml")))
     main(files, recreate)

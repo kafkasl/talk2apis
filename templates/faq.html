@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Include your custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a id='page-title' href="/"><h1>Talk2APIs</h1></a>
+            <a href="/faq" class="btn btn-primary">FAQ</a>
+        </div>
+    </header>
+
+    <div id="app">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-6">
+
+                    <h2>FAQs</h2>
+
+                    <section id="what-is-this-page">
+                        <h3>What is this page?</h3>
+                        <p>
+                            This page is a tool that demonstrates the use of Large Language Models (LLMs) for generating code, specifically for making API calls.
+                            It serves as a practical example of how AI can be used to automate interactions with software services.
+                        </p>
+                        <p>
+                            Users can specify a task they want to accomplish and provide their credentials for the service that needs to be used.
+                            The LLM then processes this information with the API description for the service
+                            and generate a Python script to perform the task.
+                        </p>
+                        <p>
+                            This platform is primarily an educational and experimental resource,
+                            aimed at showcasing the current abilities of LLMs in the realm of software development.
+                        </p>
+                    </section>
+
+                    <section id="how-to-use">
+                        <h3>How do I use it?</h3>
+                        <p>Follow these steps to use this tool:</p>
+                        <ul>
+                            <li><strong>Specify the Task:</strong> Begin by describing the task you want to achieve. This should be a clear and concise statement of what you want the generated code to accomplish using the API.</li>
+                            <li><strong>Provide API Details:</strong> Input the details of the API you want to interact with. This includes the OpenAPI service description, which should have information about endpoints, input/output parameters, and user authentication methods.</li>
+                            <li><strong>Enter Credentials:</strong> Provide your credentials, such as an API key or user token. These are necessary for the LLM to authenticate and interact with the API on your behalf. This field can be left blank and fill it up later.</li>
+                            <li><strong>Submit the Task:</strong> Once you've filled in all the necessary information, submit the task.</li>
+                            <li><strong>Review Generated Code:</strong> The LLM will process your request and generate a Python script tailored to your specified task and API. This script will be displayed on the screen for you to review.</li>
+                            <li><strong>Execute the Code:</strong> Optionally, you can choose to run the script on our server. This will execute the code and provide you with the results of the task you specified.</li>
+                        </ul>
+                    </section>
+
+                    <section id="why-build-this">
+                        <h3>Why did you build this?</h3>
+                        <p>
+                            We believe that AIs will soon become the main consumers of software services.
+                            We want to bring that future closer by providing a hands-on example, we aim to inspire developers, researchers, and technology enthusiasts to explore the potential of AI in programming and to consider the possibilities of AI-assisted development.
+                        </p>
+                    </section>
+
+                    <section id="who-built-this">
+                        <h3>Who built this?</h3>
+                        <p>This platform was developed by Pol Alvarez and Jordi Montes, two individuals passionate about the intersection of AI and software development.</p>
+                        <ul>
+                            <li><strong>Pol Alvarez:</strong> Pol is a software engineer with a background in AI and machine learning. He is passionate about the potential of AI to transform software development and is excited to explore its possibilities.</li>
+                            <li><strong>Jordi Montes:</strong> Jordi Montes is a developer currently focused on building Fewsats. An innovative platform that redefines software-as-a-service, where users can trigger software executions based on desired behavior rather than the underlying code.</li>
+                        </ul>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include jQuery and Bootstrap JS for functionality -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</body>
+</html>

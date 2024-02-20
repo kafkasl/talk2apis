@@ -31,6 +31,7 @@ $(document).ready(function() {
         var token = $('#token').val();
         var prompt = $('#prompt').val();
 
+        console.log('making jaax call')
         // Send data to the server
         $.ajax({
             url: '/gen-script',
@@ -91,8 +92,7 @@ $(document).ready(function() {
             if (result.output) {
                 $('#output').text(result.output);
             } else {
-                $('#output').text(result.error);
-            }
+                $('#output').html(`Error running code. Did you forget to add your credentials?<br>` + result.error);            }
         } catch (err) {
             $('#output').text(err.message);
         }
