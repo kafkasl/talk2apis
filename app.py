@@ -107,7 +107,7 @@ def run_code():
     code = request.json.get("code")
 
     # Generate a random file name
-    filename = f"temp_script_{uuid.uuid4().hex}.py"
+    filename = f"user-scripts/temp_script_{uuid.uuid4().hex}.py"
 
     # Save the code to a file
     with open(filename, "w") as file:
@@ -132,10 +132,6 @@ def run_code():
     except Exception as e:
         output = None
         error = str(e)
-
-    finally:
-        # Clean up: Remove the temporary file
-        os.remove(filename)
 
     return jsonify({"output": output, "error": error})
 
