@@ -4,3 +4,4 @@
 .env
 .vscode
 talk2apis
+.DS_Store

@@ -17,3 +17,8 @@ services:
       context: .
       dockerfile: Dockerfile.code-runner
     image: talk2apis-code-runner
+  db-setup:
+    build: .
+    command: ["python", "populate_db.py",  "--definition_files", "openapi/definitions/openai.yaml"]
+    volumes:
+      - .:/app

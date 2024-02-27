@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, jsonify, request
 from database.database import init_db
-import subprocess
 import uuid
 import docker
 
