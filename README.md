@@ -2,9 +2,9 @@
 
 Talk2Apis uses natural text to interact with any API through HTTP and it only needs the OpenAPI definition files to do so.
 
-* Demo: https://talk2apis.com
-* Blogpost: https://medium.com/@pol.avec/from-text-to-actions-llms-as-the-new-software-consumers-8dc5fd065623
-* Reach us on X, @pol_avec & @positiveblue2
+* [Demo](https://talk2apis.com)
+* [Blogpost](https://medium.com/@pol.avec/from-text-to-actions-llms-as-the-new-software-consumers-8dc5fd065623)
+* Reach us on X, [@pol_avec](https://X.com/pol_avec) & [@positiveblue2](https://twitter.com/positiveblue2)
 
   
 ## Run the code
