@@ -209,7 +209,11 @@ async def get_auth_info(
     """
 
     if not use_llm:
-        return auth_info[service]
+        if service in auth_info:
+            return auth_info[service]
+        else:
+            # General instructions for using bearer token authentication
+            return "To authenticate the request, include a header with 'Authorization: Bearer <YOUR_TOKEN_HERE>'. Replace <YOUR_TOKEN_HERE> with your actual token."
 
     user_prompt = render(
         auth_prompt,

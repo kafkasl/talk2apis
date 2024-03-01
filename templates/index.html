@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -11,11 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 
 </head>
+
 <body>
     <header>
         <div class="header-content">
-            <a id='page-title' href="/"><h1>Talk2APIs</h1></a>
-            <a href="/faq" class="btn btn-primary">FAQ</a>
+            <a id='page-title' href="/">
+                <h1>Talk2APIs</h1>
+            </a>
+            <a id="blogpost"
+                href="https://medium.com/@pol.avec/from-text-to-actions-llms-as-the-new-software-consumers-8dc5fd065623"
+                class="btn btn-primary">Blog Post</a>
+            <a id="faq-link" href="/faq" class="btn btn-primary">FAQ</a>
         </div>
     </header>
 
@@ -30,30 +37,36 @@
                                 <option value="github">Github</option>
                                 <option value="openai">OpenAI</option>
                                 <option value="seqera">Seqera Platform</option>
+                                <option value="slack">Slack</option>
                                 <!-- <option value="jira">Jira</option> -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="token">Token</label>
-                            <input type="text" class="form-control" id="token" placeholder="Enter token" value="YOUR_TOKEN">
+                            <input type="text" class="form-control" id="token" placeholder="Enter token"
+                                value="YOUR_TOKEN">
                         </div>
                         <div class="form-group">
                             <label for="prompt">Prompt</label>
-                            <textarea class="form-control" id="prompt" rows="3" placeholder="Enter prompt">Give me a list of all the subscriptions for kafkasl in the format `owner/name`.</textarea>
+                            <textarea class="form-control" id="prompt" rows="3"
+                                placeholder="Enter prompt">Give me a list of all the subscriptions for kafkasl in the format `owner/name`.</textarea>
                         </div>
                         <button id="submit-button" type="submit" class="btn btn-primary">Submit</button>
                     </form>
                     <div class="card">
                         <div class="card-header" id="endpointsHeading">
-                          <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#endpointsCollapse" aria-expanded="false" aria-controls="endpointsCollapse">
-                              Endpoints considered
-                            </button>
-                          </h5>
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    data-target="#endpointsCollapse" aria-expanded="false"
+                                    aria-controls="endpointsCollapse">
+                                    Endpoints considered
+                                </button>
+                            </h5>
                         </div>
-                        <div id="endpointsCollapse" class="collapse" aria-labelledby="endpointsHeading">                          <div class="card-body">
-                            <div id="endpoints"></div>
-                          </div>
+                        <div id="endpointsCollapse" class="collapse" aria-labelledby="endpointsHeading">
+                            <div class="card-body">
+                                <div id="endpoints"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -85,4 +98,5 @@
 
 
 </body>
+
 </html>

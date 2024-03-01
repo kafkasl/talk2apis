@@ -7,16 +7,25 @@ body {
     max-width: 95%;
 }
 
-h1, .h1 {
+h1,
+.h1 {
     font-size: 2.5rem;
     /* color: ##17a2b8; */
 }
 
-#page-title, #page-title:visited, #page-title:hover, #page-title:active, #page-title:focus {
-    color: inherit; /* Makes the color the same as the parent element */
-    text-decoration: none; /* Removes underline */
-    background-color: transparent; /* Ensures no background color */
-    outline: none; /* Removes focus outline */
+#page-title,
+#page-title:visited,
+#page-title:hover,
+#page-title:active,
+#page-title:focus {
+    color: inherit;
+    /* Makes the color the same as the parent element */
+    text-decoration: none;
+    /* Removes underline */
+    background-color: transparent;
+    /* Ensures no background color */
+    outline: none;
+    /* Removes focus outline */
     display: block;
     margin: 0 auto;
 }
@@ -45,7 +54,8 @@ h1, .h1 {
     border-color: #6c757d;
 }
 
-#pyeditor, #output {
+#pyeditor,
+#output {
     display: block;
     white-space: pre-wrap;
     background-color: #f8f9fa;
@@ -55,7 +65,8 @@ h1, .h1 {
 }
 
 #output {
-    min-height: 100px; /* Ensure the output area is visibly defined */
+    min-height: 100px;
+    /* Ensure the output area is visibly defined */
 }
 
 .row {
@@ -112,16 +123,23 @@ header {
 }
 
 .header-content {
-    display: flex; /* Enable Flexbox */
-    justify-content: space-between; /* Space between items */
-    align-items: center; /* Align items vertically */
-    max-width: 95%; /* Adjust max width as necessary */
-    margin: 0 auto; /* Center the header content block */
+    display: flex;
+    /* Enable Flexbox */
+    justify-content: space-between;
+    /* Space between items */
+    align-items: center;
+    /* Align items vertically */
+    max-width: 90%;
+    /* Adjust max width as necessary */
+    margin: 0 auto;
+    /* Center the header content block */
 }
 
 header h1 {
-    flex-grow: 1; /* Allows the title to take up maximum available space */
-    text-align: center; /* Ensure the title is centered within its flex-grow space */
+    flex-grow: 1;
+    /* Allows the title to take up maximum available space */
+    text-align: center;
+    /* Ensure the title is centered within its flex-grow space */
     margin: 0;
 }
 
@@ -133,11 +151,13 @@ header h1 {
 
 /* Additions for FAQ Page */
 #app {
-    padding: 1rem; /* Adds padding around the app content for better spacing */
+    padding: 1rem;
+    /* Adds padding around the app content for better spacing */
 }
 
 section {
-    margin-bottom: 2rem; /* Adds more space between each FAQ section */
+    margin-bottom: 2rem;
+    /* Adds more space between each FAQ section */
 }
 
 h2 {
@@ -145,20 +165,28 @@ h2 {
 }
 
 section h3 {
-    margin: 1rem 0 3rem; /* Ensures spacing above each section heading */
+    margin: 1rem 0 3rem;
+    /* Ensures spacing above each section heading */
     text-align: center;
 }
 
 /* Ensures consistent spacing and styling for paragraphs and lists within sections */
-section p, section ul {
-    font-size: 1rem; /* Matches font size of form controls for consistency */
-    line-height: 1.5; /* Ensures line height is consistent with other text elements */
+section p,
+section ul {
+    font-size: 1rem;
+    /* Matches font size of form controls for consistency */
+    line-height: 1.5;
+    /* Ensures line height is consistent with other text elements */
     text-align: justify;
 }
 
 /* List item adjustments for clarity and emphasis */
 section ul li {
-    margin-bottom: 0.5rem; /* Adds space between list items for readability */
+    margin-bottom: 0.5rem;
+    /* Adds space between list items for readability */
 }
 
-1
+#faq-link,
+#blogpost-link {
+    margin: 0 0.5rem;
+}
