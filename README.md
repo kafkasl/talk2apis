@@ -1,9 +1,12 @@
 # Talk2APIS
 
-Server code to test and show the potential of JIT Workflow automation.
+Talk2Apis uses natural text to interact with any API through HTTP and it only needs the OpenAPI definition files to do so.
 
-**IMPORTANT**: we use flask and sqlite which may not be great for prod environments. However, if we are doing a demo to show people how this can change the world, we can make it stateless and scale horizontally (stateless replies) + load balancer.
+* [Demo](https://talk2apis.com)
+* [Blogpost](https://medium.com/@pol.avec/from-text-to-actions-llms-as-the-new-software-consumers-8dc5fd065623)
+* Reach us on X, [@pol_avec](https://X.com/pol_avec) & [@positiveblue2](https://twitter.com/positiveblue2)
 
+  
 ## Run the code
 
 ### Set up environment
