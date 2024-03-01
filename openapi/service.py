@@ -166,7 +166,6 @@ class Service:
                         only_schema_paths=True,
                     )
 
-                endpoint["parameters"] = self.parse_parameters(path, method_dict)
                 endpoint["definition"] = json.dumps(method_dict)
 
                 try:

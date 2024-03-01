@@ -22,9 +22,7 @@ load_dotenv()
 
 
 def main(files, recreate=False):
-    # Connect to the SQLite database
-    # db_uri = os.getenv("SQLALCHEMY_APIS_DATABASE_URI")
-    # print(db_uri)
+    # Connect to the SQLitef database
     db_uri = "sqlite:///instance/apis.db"
     engine = create_engine(db_uri)
     Session = sessionmaker(bind=engine)
@@ -39,6 +37,7 @@ def main(files, recreate=False):
                 session.query(Services).filter(Services.name == service_name).one()
             )
             if not recreate:
+                print(f"Service {service_name} already exists in the database. Skipping...")
                 continue
 
             print(
@@ -84,7 +83,6 @@ def main(files, recreate=False):
                 method=endpoint["method"],
                 summary=endpoint["summary"],
                 description=endpoint["description"],
-                parameters=endpoint["parameters"],
                 definition=endpoint["definition"],
                 embedding=endpoint["embedding"],
             )
@@ -92,19 +90,6 @@ def main(files, recreate=False):
             session.add(db_endpoint)
             session.commit()
 
-            if "parameters" in endpoint:
-                for parameter in endpoint["parameters"]:
-                    db_parameter = APIParameters(
-                        service_id=db_service.id,
-                        endpoint_id=db_endpoint.id,
-                        name=parameter["name"],
-                        type=parameter["type"],
-                        description=parameter["description"],
-                        required=parameter["required"],
-                    )
-
-                    session.add(db_parameter)
-                    session.commit()
 
     # Don't forget to close the session when you're done
     session.close()
