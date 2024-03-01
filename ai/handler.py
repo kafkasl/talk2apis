@@ -8,7 +8,6 @@ from litellm import acompletion
 from litellm import RateLimitError
 from litellm.exceptions import APIError
 
-# from openai.error import APIError, RateLimitError, Timeout, TryAgain
 from retry import retry
 
 # Configure the logger
@@ -55,7 +54,7 @@ class AiHandler:
         model: str,
         system: str,
         user: str,
-        temperature: float = 0.2,
+        temperature: float = 0.0,
         frequency_penalty: float = 0.0,
     ):
         try:
