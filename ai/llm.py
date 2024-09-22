@@ -10,7 +10,7 @@ import json
 from database.services import APIEndpoint
 from ai.embeddings import get_embedding, cosine_similarity, count_tokens
 
-DEFAULT_MODEL = "gpt-4"
+DEFAULT_MODEL = "gpt-3.5"
 ai_handler = AiHandler()
 
 def clip_to_context(text: str, clip_ratio: float= 0.8, model=DEFAULT_MODEL, **kwargs) -> str:
@@ -361,34 +361,3 @@ async def generate_service_call(prompt, service, token):
 
     return code, None
 
-
-# asyncio.run(main())
-
-# import os
-
-
-# import requests
-
-
-# def get_watched_repos(user):
-#     token = os.getenv("GITHUB_API_TOKEN")
-#     headers = {"Authorization": f"token {token}"}
-#     url = f"https://api.github.com/users/{user}/subscriptions"
-#     watched_repos = []
-
-#     while url:
-#         response = requests.get(url, headers=headers)
-#         data = response.json()
-#         for repo in data:
-#             watched_repos.append(repo["full_name"])
-#         if "next" in response.links.keys():
-#             url = response.links["next"]["url"]
-#         else:
-#             url = None
-
-#     return watched_repos
-
-
-# if __name__ == "__main__":
-#     watched_repositories = get_watched_repos("kafkasl")
-#     print(watched_repositories)
