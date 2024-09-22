@@ -10,7 +10,7 @@ import json
 from database.services import APIEndpoint
 from ai.embeddings import get_embedding, cosine_similarity, count_tokens
 
-DEFAULT_MODEL = "gpt-3.5"
+DEFAULT_MODEL = "gpt-4o-mini"
 ai_handler = AiHandler()
 
 def clip_to_context(text: str, clip_ratio: float= 0.8, model=DEFAULT_MODEL, **kwargs) -> str:
